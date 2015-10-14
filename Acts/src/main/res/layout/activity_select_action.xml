@@ -15,19 +15,20 @@
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@+id/editText" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
         android:text="Акты"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:editable="false" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editText2"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/spActs"
         android:layout_alignParentLeft="true"
         android:text="Договоры" />
 
@@ -35,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spContracts"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/spActs"
         android:layout_toRightOf="@+id/editText2" />
 
     <Button
@@ -44,7 +45,8 @@
         android:text="Scan"
         android:id="@+id/bScan"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="launchScannerActivity" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -68,7 +70,8 @@
         android:text="Test scan"
         android:id="@+id/bTest"
         android:layout_above="@+id/tvContent"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:enabled="false" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -76,6 +79,9 @@
         android:id="@+id/etTestQRCode"
         android:layout_above="@+id/tvFormat"
         android:layout_toLeftOf="@+id/bTest"
-        android:text="А ИКС3/28-1509 20150916" />
+        android:text="А ИКС3/28-1509 20150916"
+        android:enabled="false"
+        android:editable="false" />
+
 
 </RelativeLayout>

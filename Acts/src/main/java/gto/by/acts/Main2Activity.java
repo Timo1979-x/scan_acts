@@ -1,30 +1,28 @@
 package gto.by.acts;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
+import gto.by.acts.helpers.SoundHelper;
 import gto.by.acts.other.Constants;
 
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
+    private final static String LOG_TAG = "MainActs";
     class Results {
         ArrayList<String> actStatusNames = new ArrayList<String>();
         ArrayList<Byte> actStatusIDs = new ArrayList<Byte>();
@@ -37,6 +35,23 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 
     private Button bSettings = null;
     private Button bStart = null;
+
+
+    public void onPlaySound(View v) {
+//        if (mediaPlayer != null) {
+//            try {
+//                mediaPlayer.release();
+//                mediaPlayer = null;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        Log.d(LOG_TAG, "start Raw");
+//        mediaPlayer = MediaPlayer.create(this, R.raw.error);
+//        mediaPlayer.start();
+        SoundHelper.playSound(this, R.raw.error);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,6 +73,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 //            }
 //        });
     }
+
 
     @Override
     public void onClick(View view) {
@@ -97,7 +113,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                             startActivity(intent);
                         } else {
                             Toast.makeText(getApplicationContext(), result.errorMessage, Toast.LENGTH_LONG).show();
-                            Log.e("db", result.errorMessage);
+                            Log.e(LOG_TAG, result.errorMessage);
                         }
                     }
                     @Override
@@ -134,7 +150,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 
                         } catch(Exception e) {
                             results.errorMessage = e.getMessage();
-                            Log.e("db", results.errorMessage, e);
+                            Log.e(LOG_TAG, results.errorMessage, e);
                         } finally {
                             if(rs != null) {
                                 try {
@@ -162,8 +178,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                         }
                         return results;
                     }
-
-
                 };
                 task.execute();
                 break;

@@ -25,5 +25,14 @@
         android:layout_below="@+id/bSettings"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play sound"
+        android:id="@+id/button"
+        android:layout_below="@+id/bStart"
+        android:layout_centerHorizontal="true"
+        android:onClick="onPlaySound" />
+
 
 </RelativeLayout>
