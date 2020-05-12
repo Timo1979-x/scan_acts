@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Acts</string>
+    <string name="app_name">Сканер актов</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_main2">Сканер актов</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="label_username">User</string>
     <string name="text_username">sa</string>

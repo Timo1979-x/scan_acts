@@ -10,4 +10,5 @@ public class Constants {
 
     public static final int RESULT_OK =  0;
     public static final int RESULT_NEW_STATE_UNDEFINED =  1;
+    public static final int REQUEST_ADDITIONAL_PERMISSIONS =  12;
 }

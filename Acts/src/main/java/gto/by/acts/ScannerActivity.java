@@ -31,10 +31,10 @@ import gto.by.acts.fragments.*;
 public class ScannerActivity extends ActionBarActivity implements MessageDialogFragment.MessageDialogListener,
         ZXingScannerView.ResultHandler, FormatSelectorDialogFragment.FormatSelectorDialogListener,
         CameraSelectorDialogFragment.CameraSelectorDialogListener {
-    public class Results {
-        public String message = null;
-        public boolean error = false;
-        public Throwable cause = null;
+    class Results {
+        String message = null;
+        boolean error = false;
+        Throwable cause = null;
     };
 
     public class AsyncTaskDoUpdate extends AsyncTask<Object, Integer, ScannerActivity.Results> {
@@ -72,15 +72,18 @@ public class ScannerActivity extends ActionBarActivity implements MessageDialogF
             }
 
             try {
+                long t1 = System.currentTimeMillis();
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 c = DriverManager.getConnection(connString, userName, userPassword);
-
-                ps1 = c.prepareStatement("Update [AWP_BTO].[Application].[Act] set [ActStatusID]=? where [number] = ? and [Period] = ?");
+                long t2 = System.currentTimeMillis();
+                ps1 = c.prepareStatement("Update [AWP_BTO].[Application].[Act] set [ActStatusID]=? where [number] = ?"); //  and [Period] = ?
+                long t3 = System.currentTimeMillis();
                 ps1.setByte(1, (Byte)params[0]);
                 ps1.setString(2, (String) params[1]);
-                ps1.setDate(3, (java.sql.Date) params[2]);
+//                ps1.setDate(3, (java.sql.Date) params[2]);
                 ps1.execute();
-                results.message = "update count: " + ps1.getUpdateCount();
+                long t4 = System.currentTimeMillis();
+                results.message = "update count: " + ps1.getUpdateCount() + " timings (ms): " + (t2 - t1) + " " + (t3 - t2) + " " + (t4 - t3);
                 SoundHelper.playSound(context, R.raw.success);
             } catch(Exception e) {
                 SoundHelper.playSound(context, R.raw.error);

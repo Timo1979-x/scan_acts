@@ -54,11 +54,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         //SharedPreferences sPref = getPreferences(MODE_PRIVATE);
         SharedPreferences sPref = getApplicationContext().getSharedPreferences("db", MODE_PRIVATE);
 
-        String userName = sPref.getString(Constants.USERNAME, "sa");
+        String userName = sPref.getString(Constants.USERNAME, "acts");
         etUser.setText(userName);
-        String userPassword = sPref.getString(Constants.PASSWORD, "123456");
+        String userPassword = sPref.getString(Constants.PASSWORD, "");
         etPass.setText(userPassword);
-        String connString = sPref.getString(Constants.CONNECTIONSTRING, "jdbc:jtds:sqlserver://192.168.200.7/AWP_BTO;instance=SQLEXPRESS;socketTimeout=5");
+        String connString = sPref.getString(Constants.CONNECTIONSTRING, "jdbc:jtds:sqlserver://192.168.200.4/AWP_BTO;instance=SQLEXPRESS;socketTimeout=5");
         etConnString.setText(connString);
         Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
     }

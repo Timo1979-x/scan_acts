@@ -1,16 +1,23 @@
 package gto.by.acts;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,8 +28,11 @@ import java.util.ArrayList;
 import gto.by.acts.helpers.SoundHelper;
 import gto.by.acts.other.Constants;
 
+import static gto.by.acts.other.Constants.REQUEST_ADDITIONAL_PERMISSIONS;
+
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
     private final static String LOG_TAG = "MainActs";
+
     class Results {
         ArrayList<String> actStatusNames = new ArrayList<String>();
         ArrayList<Byte> actStatusIDs = new ArrayList<Byte>();
@@ -31,7 +41,9 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         ArrayList<Byte> contractStatusIDs = new ArrayList<Byte>();
         String errorMessage;
         //HashMap<Integer, Integer> contractsMapIndex2Id = new HashMap<Integer, Integer>();
-    };
+    }
+
+    ;
 
     private Button bSettings = null;
     private Button bStart = null;
@@ -60,10 +72,11 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        bStart = (Button)findViewById(R.id.bStart);
+        bStart = (Button) findViewById(R.id.bStart);
         bStart.setOnClickListener(this);
-        bSettings = (Button)findViewById(R.id.bSettings);
+        bSettings = (Button) findViewById(R.id.bSettings);
         bSettings.setOnClickListener(this);
+        verifyStoragePermissions(this);
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -74,6 +87,32 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 //        });
     }
 
+    @TargetApi(23)
+    private void verifyStoragePermissions(Activity activity) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return;
+        }
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    new String[]{Manifest.permission.CAMERA},
+                    REQUEST_ADDITIONAL_PERMISSIONS
+            );
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_ADDITIONAL_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Получено разрешение использовать камеру", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Разрешение использовать камеру НЕ ПОЛУЧЕНО", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -93,20 +132,20 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                     PreparedStatement ps1 = null;
 
                     @Override
-                    protected void onPostExecute (Main2Activity.Results result) {
+                    protected void onPostExecute(Main2Activity.Results result) {
 
-                        if(result.errorMessage == null || result.errorMessage == "") {
+                        if (result.errorMessage == null || result.errorMessage == "") {
                             Intent intent = new Intent(Main2Activity.this, SelectActionActivity.class);
                             intent.putExtra("actStatusNames", result.actStatusNames.toArray(new String[]{}));
                             byte[] arr = new byte[result.actStatusIDs.size()];
-                            for(int i = 0; i < result.actStatusIDs.size(); i++) {
+                            for (int i = 0; i < result.actStatusIDs.size(); i++) {
                                 arr[i] = result.actStatusIDs.get(i);
                             }
                             intent.putExtra("actStatusIDs", arr);
                             intent.putExtra("contractStatusNames", result.contractStatusNames.toArray(new String[]{}));
 
                             arr = new byte[result.contractStatusIDs.size()];
-                            for(int i = 0; i < result.contractStatusIDs.size(); i++) {
+                            for (int i = 0; i < result.contractStatusIDs.size(); i++) {
                                 arr[i] = result.contractStatusIDs.get(i);
                             }
                             intent.putExtra("contractStatusIDs", arr);
@@ -116,6 +155,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                             Log.e(LOG_TAG, result.errorMessage);
                         }
                     }
+
                     @Override
                     protected Main2Activity.Results doInBackground(Void... voids) {
                         //SharedPreferences prefs = getPreferences(MODE_PRIVATE);
@@ -124,7 +164,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                         userPassword = prefs.getString(Constants.PASSWORD, null);
                         connString = prefs.getString(Constants.CONNECTIONSTRING, null);
                         Main2Activity.Results results = new Main2Activity.Results();
-                        if(userName == null || userPassword == null || connString == null) {
+                        if (userName == null || userPassword == null || connString == null) {
                             results.errorMessage = "Settings is empty!";
                             return results;
                         }
@@ -135,7 +175,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 
                             ps1 = c.prepareStatement("select [ID], [Name] from [AWP_BTO].[Dictionary].[ActStatus] order by [ID]");
                             rs = ps1.executeQuery();
-                            while(rs.next()) {
+                            while (rs.next()) {
                                 results.actStatusNames.add(rs.getString(2));
                                 results.actStatusIDs.add(rs.getByte(1));
                             }
@@ -143,16 +183,16 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                             ps1.close();
                             ps1 = c.prepareStatement("select [ID], [Name] from [AWP_BTO].[Dictionary].[ContractState] order by [ID]");
                             rs = ps1.executeQuery();
-                            while(rs.next()) {
+                            while (rs.next()) {
                                 results.contractStatusNames.add(rs.getString(2));
                                 results.contractStatusIDs.add(rs.getByte(1));
                             }
 
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             results.errorMessage = e.getMessage();
                             Log.e(LOG_TAG, results.errorMessage, e);
                         } finally {
-                            if(rs != null) {
+                            if (rs != null) {
                                 try {
                                     rs.close();
                                 } catch (SQLException e) {
@@ -160,7 +200,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                                 }
                             }
 
-                            if(ps1!=null) {
+                            if (ps1 != null) {
                                 try {
                                     ps1.close();
                                 } catch (SQLException e) {
@@ -168,7 +208,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                                 }
                             }
 
-                            if(c != null) {
+                            if (c != null) {
                                 try {
                                     c.close();
                                 } catch (SQLException e) {
